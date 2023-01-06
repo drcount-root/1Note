@@ -1,34 +1,23 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import "bootstrap/dist/css/bootstrap.min.css";
+import {Routes, Route, Navigate} from 'react-router-dom';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  return <Routes>
+    <Route path="/" element={<h1>Home</h1>}/>
+    <Route path="/new" element={<h1>New</h1>}/>
 
-  return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+    {/* id could be a num or letter. url ex- localhost:5173/a or localhost:5173/1 etc.*/}
+    <Route path="/:id">
+      {/* using index so that at localhost:5173/1 url, it will view/show Show page*/}
+      <Route index element={<h1>Show</h1>}/>
+      {/* at localhost:5173/1/edit url, it will show Edit page*/}
+      <Route path="edit" element={<h1>Edit</h1>}/>
+    </Route>
+
+
+    {/* if path provided by user doesn't matches with any of the defined paths, then it navigates/redirects the user to the homepage */}
+    <Route path="*" element={<Navigate to="/"/>}/>
+  </Routes>;
 }
 
-export default App
+export default App;
