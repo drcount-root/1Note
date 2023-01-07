@@ -55,12 +55,25 @@ const App = () => {
     });
   };
 
+  const addTag = (tag: Tag) => {
+    setTags((prev) => [...prev, tag]);
+  };
+
   return (
     <React.Fragment>
       <Container className="my-4">
         <Routes>
           <Route path="/" element={<h1>Home</h1>} />
-          <Route path="/new" element={<NewNote onSubmit={onCreateNote}/>} />
+          <Route
+            path="/new"
+            element={
+              <NewNote
+                onSubmit={onCreateNote}
+                onAddTag={addTag}
+                availableTags={tags}
+              />
+            }
+          />
 
           {/* id could be a num or letter. url ex- localhost:5173/a or localhost:5173/1 etc.*/}
           <Route path="/:id">
