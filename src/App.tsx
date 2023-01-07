@@ -5,13 +5,28 @@ import { Container } from "react-bootstrap";
 
 import NewNote from "./NewNote";
 
+export type Note = {
+  id: string;
+} & NoteData;
+
+export type NoteData = {
+  title: string;
+  markdown: string;
+  tags: Tag[];
+};
+
+export type Tag = {
+  id: string;
+  label: string;
+};
+
 const App = () => {
   return (
     <React.Fragment>
       <Container className="my-4">
         <Routes>
           <Route path="/" element={<h1>Home</h1>} />
-          <Route path="/new" element={<NewNote/>} />
+          <Route path="/new" element={<NewNote />} />
 
           {/* id could be a num or letter. url ex- localhost:5173/a or localhost:5173/1 etc.*/}
           <Route path="/:id">
