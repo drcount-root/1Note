@@ -1,13 +1,14 @@
-import React from "react";
-import { useMemo } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useMemo } from "react";
 import { Container } from "react-bootstrap";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { NewNote } from "./NewNote";
 import { useLocalStorage } from "./useLocalStorage";
-import { v4 as uuidv4 } from "uuid";
-
-import NewNote from "./NewNote";
-import NoteList from "./NoteList";
+import { v4 as uuidV4 } from "uuid";
+import { NoteList } from "./NoteList";
+import { NoteLayout } from "./NoteLayout";
+import { Note } from "./Note";
+import { EditNote } from "./EditNote";
 
 export type Note = {
   id: string;
@@ -34,7 +35,7 @@ export type Tag = {
   label: string;
 };
 
-const App = () => {
+function App() {
   const [notes, setNotes] = useLocalStorage<RawNote[]>("NOTES", []);
   const [tags, setTags] = useLocalStorage<Tag[]>("TAGS", []);
 
@@ -47,49 +48,96 @@ const App = () => {
     });
   }, [notes, tags]);
 
-  const onCreateNote = ({ tags, ...data }: NoteData) => {
+  function onCreateNote({ tags, ...data }: NoteData) {
     setNotes((prevNotes) => {
       return [
         ...prevNotes,
-        { ...data, id: uuidv4(), tagIds: tags.map((tag) => tag.id) },
+        { ...data, id: uuidV4(), tagIds: tags.map((tag) => tag.id) },
       ];
     });
-  };
+  }
 
-  const addTag = (tag: Tag) => {
+  function onUpdateNote(id: string, { tags, ...data }: NoteData) {
+    setNotes((prevNotes) => {
+      return prevNotes.map((note) => {
+        if (note.id === id) {
+          return { ...note, ...data, tagIds: tags.map((tag) => tag.id) };
+        } else {
+          return note;
+        }
+      });
+    });
+  }
+
+  function onDeleteNote(id: string) {
+    setNotes((prevNotes) => {
+      return prevNotes.filter((note) => note.id !== id);
+    });
+  }
+
+  function addTag(tag: Tag) {
     setTags((prev) => [...prev, tag]);
-  };
+  }
+
+  function updateTag(id: string, label: string) {
+    setTags((prevTags) => {
+      return prevTags.map((tag) => {
+        if (tag.id === id) {
+          return { ...tag, label };
+        } else {
+          return tag;
+        }
+      });
+    });
+  }
+
+  function deleteTag(id: string) {
+    setTags((prevTags) => {
+      return prevTags.filter((tag) => tag.id !== id);
+    });
+  }
 
   return (
-    <React.Fragment>
-      <Container className="my-4">
-        <Routes>
-          <Route path="/" element={<NoteList/>} />
+    <Container className="my-4">
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <NoteList
+              notes={notesWithTags}
+              availableTags={tags}
+              onUpdateTag={updateTag}
+              onDeleteTag={deleteTag}
+            />
+          }
+        />
+        <Route
+          path="/new"
+          element={
+            <NewNote
+              onSubmit={onCreateNote}
+              onAddTag={addTag}
+              availableTags={tags}
+            />
+          }
+        />
+        <Route path="/:id" element={<NoteLayout notes={notesWithTags} />}>
+          <Route index element={<Note onDelete={onDeleteNote} />} />
           <Route
-            path="/new"
+            path="edit"
             element={
-              <NewNote
-                onSubmit={onCreateNote}
+              <EditNote
+                onSubmit={onUpdateNote}
                 onAddTag={addTag}
                 availableTags={tags}
               />
             }
           />
-
-          {/* id could be a num or letter. url ex- localhost:5173/a or localhost:5173/1 etc.*/}
-          <Route path="/:id">
-            {/* using index so that at localhost:5173/1 url, it will view/show Show page*/}
-            <Route index element={<h1>Show</h1>} />
-            {/* at localhost:5173/1/edit url, it will show Edit page*/}
-            <Route path="edit" element={<h1>Edit</h1>} />
-          </Route>
-
-          {/* if path provided by user doesn't matches with any of the defined paths, then it navigates/redirects the user to the homepage */}
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Container>
-    </React.Fragment>
+        </Route>
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Container>
   );
-};
+}
 
 export default App;
