@@ -4,7 +4,7 @@ import { Container } from "react-bootstrap";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { NewNote } from "./NewNote";
 import { useLocalStorage } from "./useLocalStorage";
-import { v4 as uuidV4 } from "uuid";
+import { v4 as uuidv4  } from 'uuid';
 import { NoteList } from "./NoteList";
 import { NoteLayout } from "./NoteLayout";
 import { Note } from "./Note";
@@ -52,7 +52,7 @@ function App() {
     setNotes((prevNotes) => {
       return [
         ...prevNotes,
-        { ...data, id: uuidV4(), tagIds: tags.map((tag) => tag.id) },
+        { ...data, id: uuidv4(), tagIds: tags.map((tag) => tag.id) },
       ];
     });
   }
