@@ -7,6 +7,7 @@ import { useLocalStorage } from "./useLocalStorage";
 import { v4 as uuidv4 } from "uuid";
 
 import NewNote from "./NewNote";
+import NoteList from "./NoteList";
 
 export type Note = {
   id: string;
@@ -63,7 +64,7 @@ const App = () => {
     <React.Fragment>
       <Container className="my-4">
         <Routes>
-          <Route path="/" element={<h1>Home</h1>} />
+          <Route path="/" element={<NoteList/>} />
           <Route
             path="/new"
             element={
